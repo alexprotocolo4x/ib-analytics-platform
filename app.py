@@ -28,8 +28,8 @@ StarletteUploadFile.spool_max_size = 100 * 1024 * 1024  # 100MB
 
 # Mount static files
 static_path = Path(__file__).parent / "static"
-static_path.mkdir(exist_ok=True)
-app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+if static_path.exists():
+    app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 
 # CORS configuration
 app.add_middleware(
@@ -49,13 +49,23 @@ storage = {
 @app.get("/")
 async def root():
     """Serve main interface"""
-    html_path = Path(__file__).parent / "static" / "index.html"
-    if html_path.exists():
-        return FileResponse(html_path)
+    try:
+        html_path = Path(__file__).parent / "static" / "index.html"
+        if html_path.exists():
+            return FileResponse(html_path)
+    except:
+        pass
     return {
         "status": "online",
         "service": "IB Analytics Platform",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "endpoints": {
+            "upload_deals": "POST /api/upload/deals",
+            "upload_accounts": "POST /api/upload/accounts",
+            "get_metrics": "GET /api/metrics?min_duration=0",
+            "export": "GET /api/export/excel?min_duration=0",
+            "test_upload": "/static/test-upload.html"
+        }
     }
 
 @app.get("/health")

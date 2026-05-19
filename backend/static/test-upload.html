@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Upload</title>
+</head>
+<body style="background: #000; color: #fff; padding: 40px; font-family: sans-serif;">
+    <h1>Test Upload MT5 HTML</h1>
+    
+    <form id="uploadForm" style="margin-top: 30px;">
+        <input type="file" id="fileInput" accept=".html,.htm" style="display: block; margin-bottom: 20px;">
+        <button type="submit" style="padding: 10px 20px; background: #d4af37; border: none; cursor: pointer;">Upload</button>
+    </form>
+    
+    <pre id="result" style="margin-top: 30px; background: #111; padding: 20px; border-radius: 8px;"></pre>
+    
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const resultEl = document.getElementById('result');
+            
+            if (!file) {
+                resultEl.textContent = 'Please select a file';
+                return;
+            }
+            
+            resultEl.textContent = 'Uploading...';
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('/api/upload/deals', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                resultEl.textContent = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                resultEl.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

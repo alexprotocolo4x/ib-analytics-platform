@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IB Analytics Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #d4af37;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .upload-section {
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .upload-section h2 {
+            color: #d4af37;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .file-input-wrapper {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        input[type="file"] {
+            flex: 1;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+        }
+        
+        button {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #f0c450;
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #1a4d1a;
+            border: 1px solid #2d7a2d;
+            display: block;
+        }
+        
+        .status.error {
+            background: #4d1a1a;
+            border: 1px solid #7a2d2d;
+            display: block;
+        }
+        
+        .metrics {
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            display: none;
+        }
+        
+        .metrics.show {
+            display: block;
+        }
+        
+        .metrics h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+        
+        .metric-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            color: #d4af37;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .export-btn {
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        th {
+            background: #1a1a1a;
+            color: #d4af37;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #1a1a1a;
+        }
+        
+        .loading {
+            display: none;
+            margin-top: 10px;
+            color: #d4af37;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥷 IB Analytics Platform</h1>
+        <p class="subtitle">Sistema de análisis de IBs para TAG Markets</p>
+        
+        <!-- Upload Deals HTML -->
+        <div class="upload-section">
+            <h2>1. Subir Deals (HTML de MT5 Administrator)</h2>
+            <div class="file-input-wrapper">
+                <input type="file" id="dealsFile" accept=".html,.htm">
+                <button onclick="uploadDeals()">Subir Deals</button>
+            </div>
+            <div class="loading" id="dealsLoading">Procesando...</div>
+            <div class="status" id="dealsStatus"></div>
+        </div>
+        
+        <!-- Upload Account List -->
+        <div class="upload-section">
+            <h2>2. Subir Lista de Cuentas (Opcional - Excel/CSV con columna Login)</h2>
+            <div class="file-input-wrapper">
+                <input type="file" id="accountsFile" accept=".csv,.xls,.xlsx">
+                <button onclick="uploadAccounts()">Subir Cuentas</button>
+            </div>
+            <div class="loading" id="accountsLoading">Procesando...</div>
+            <div class="status" id="accountsStatus"></div>
+        </div>
+        
+        <!-- Calculate Metrics -->
+        <div class="upload-section">
+            <h2>3. Calcular Métricas</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="minDurationFilter" style="width: auto;">
+                    <span>Filtrar trades con duración mínima de 3 minutos (excluye scalping)</span>
+                </label>
+            </div>
+            <button onclick="calculateMetrics()">Calcular Métricas</button>
+            <div class="loading" id="metricsLoading">Calculando...</div>
+        </div>
+        
+        <!-- Results -->
+        <div class="metrics" id="metricsSection">
+            <h2>📊 Resultados</h2>
+            <div class="metric-grid" id="metricGrid"></div>
+            
+            <h3 style="color: #d4af37; margin-top: 30px;">Top 10 Símbolos</h3>
+            <table id="symbolTable"></table>
+            
+            <h3 style="color: #d4af37; margin-top: 30px;">Top 10 Cuentas</h3>
+            <table id="accountTable"></table>
+            
+            <button class="export-btn" onclick="exportExcel()">📥 Exportar a Excel</button>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = window.location.origin;
+        
+        async function uploadDeals() {
+            const fileInput = document.getElementById('dealsFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Selecciona un archivo HTML');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            document.getElementById('dealsLoading').classList.add('show');
+            document.getElementById('dealsStatus').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/upload/deals`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('dealsStatus');
+                if (data.success) {
+                    statusEl.className = 'status success';
+                    statusEl.innerHTML = `
+                        ✅ ${data.message}<br>
+                        <strong>Total Deals:</strong> ${data.stats.total_deals.toLocaleString()}<br>
+                        <strong>Cuentas Únicas:</strong> ${data.stats.unique_accounts.toLocaleString()}<br>
+                        <strong>Volumen Total:</strong> ${data.stats.total_volume.toFixed(2)} lotes<br>
+                        <strong>P&L Total:</strong> $${data.stats.total_pnl.toLocaleString(undefined, {minimumFractionDigits: 2})}
+                    `;
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '❌ Error: ' + (data.detail || 'Error desconocido');
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('dealsStatus');
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Error: ' + error.message;
+            } finally {
+                document.getElementById('dealsLoading').classList.remove('show');
+            }
+        }
+        
+        async function uploadAccounts() {
+            const fileInput = document.getElementById('accountsFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Selecciona un archivo Excel o CSV');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            document.getElementById('accountsLoading').classList.add('show');
+            document.getElementById('accountsStatus').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/upload/accounts`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('accountsStatus');
+                if (data.success) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = `✅ ${data.message}`;
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '❌ Error: ' + (data.detail || 'Error desconocido');
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('accountsStatus');
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Error: ' + error.message;
+            } finally {
+                document.getElementById('accountsLoading').classList.remove('show');
+            }
+        }
+        
+        async function calculateMetrics() {
+            document.getElementById('metricsLoading').classList.add('show');
+            
+            try {
+                // Get filter checkbox value
+                const minDurationFilter = document.getElementById('minDurationFilter').checked;
+                const minDuration = minDurationFilter ? 3 : 0;
+                
+                const response = await fetch(`${API_URL}/api/metrics?min_duration=${minDuration}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayMetrics(data);
+                    document.getElementById('metricsSection').classList.add('show');
+                } else {
+                    alert('Error: ' + (data.detail || 'Error desconocido'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                document.getElementById('metricsLoading').classList.remove('show');
+            }
+        }
+        
+        function displayMetrics(data) {
+            const metrics = data.metrics;
+            const metricGrid = document.getElementById('metricGrid');
+            
+            // Show filter info if applied
+            let filterInfo = '';
+            if (metrics.deals_filtered_by_duration > 0) {
+                filterInfo = `<div style="background: #4d1a1a; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #7a2d2d;">
+                    ⚠️ <strong>${metrics.deals_filtered_by_duration.toLocaleString()} deals excluidos</strong> por duración < ${metrics.min_duration_applied} minutos
+                </div>`;
+            }
+            
+            metricGrid.innerHTML = filterInfo + `
+                <div class="metric-card">
+                    <div class="metric-label">Total Deals</div>
+                    <div class="metric-value">${metrics.total_deals.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Cuentas Únicas</div>
+                    <div class="metric-value">${metrics.unique_accounts.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Volumen Total (Lotes)</div>
+                    <div class="metric-value">${metrics.total_volume_lots.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Revenue Bruto</div>
+                    <div class="metric-value">$${metrics.revenue_bruto.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">P&L Agregado</div>
+                    <div class="metric-value">$${metrics.pnl_agregado.toLocaleString()}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Profit Factor</div>
+                    <div class="metric-value">${metrics.profit_factor}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Blow-up Rate</div>
+                    <div class="metric-value">${metrics.blowup_rate}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Margen Neto Broker</div>
+                    <div class="metric-value">$${metrics.margen_neto_broker.toLocaleString()}</div>
+                </div>
+            `;
+            
+            // Symbol table
+            const symbolTable = document.getElementById('symbolTable');
+            symbolTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Símbolo</th>
+                        <th>Deals</th>
+                        <th>Volumen (Lotes)</th>
+                        <th>Revenue</th>
+                        <th>P&L</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.by_symbol.slice(0, 10).map(s => `
+                        <tr>
+                            <td>${s.symbol}</td>
+                            <td>${s.total_deals.toLocaleString()}</td>
+                            <td>${s.total_volume.toFixed(2)}</td>
+                            <td>$${s.revenue.toLocaleString()}</td>
+                            <td>$${s.pnl.toLocaleString()}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            
+            // Account table
+            const accountTable = document.getElementById('accountTable');
+            accountTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Cuenta</th>
+                        <th>Deals</th>
+                        <th>Volumen (Lotes)</th>
+                        <th>Revenue</th>
+                        <th>P&L</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.by_account.slice(0, 10).map(a => `
+                        <tr>
+                            <td>${a.account}</td>
+                            <td>${a.total_deals.toLocaleString()}</td>
+                            <td>${a.total_volume.toFixed(2)}</td>
+                            <td>$${a.revenue.toLocaleString()}</td>
+                            <td>$${a.pnl.toLocaleString()}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+        }
+        
+        async function exportExcel() {
+            const minDurationFilter = document.getElementById('minDurationFilter').checked;
+            const minDuration = minDurationFilter ? 3 : 0;
+            window.location.href = `${API_URL}/api/export/excel?min_duration=${minDuration}`;
+        }
+    </script>
+</body>
+</html>

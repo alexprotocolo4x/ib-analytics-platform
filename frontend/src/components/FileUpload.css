@@ -1,0 +1,95 @@
+.file-upload-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.dropzone {
+  border: 2px dashed var(--border-strong);
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-tertiary);
+}
+
+.dropzone:hover {
+  border-color: var(--gold-dim);
+  background: var(--bg-elevated);
+}
+
+.dropzone.drag-active {
+  border-color: var(--gold);
+  background: rgba(200, 168, 78, 0.05);
+}
+
+.dropzone.uploaded {
+  border-color: var(--green);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.dropzone.error {
+  border-color: var(--red);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.upload-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.upload-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.upload-description {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.upload-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+}
+
+.upload-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 12px;
+}
+
+.upload-status.uploading {
+  color: var(--blue);
+}
+
+.upload-status.success {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.upload-status.error-message {
+  color: var(--red);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--blue);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

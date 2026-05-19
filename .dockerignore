@@ -1,0 +1,16 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+.git
+.gitignore
+*.md
+!README.md
+.DS_Store
+backend/
+frontend/node_modules/
+.vercel/

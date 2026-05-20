@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ib-analytics-platform
+    env: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt
+    plan: free
+    branch: main
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: PORT
+        value: 8100

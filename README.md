@@ -1,92 +1,40 @@
-# IB Analytics Platform
+# IB Analytics
 
-Plataforma de análisis de profundidad de IBs para TAG Markets.
+Plataforma que procesa los reportes de operaciones de un broker y mide la profundidad y el rendimiento de cada red de introducing brokers: niveles, clientes, volumen y actividad.
+
+## Marca blanca
+
+Puede implementarse para cualquier broker que exporte sus reportes de operaciones.
+
+Para implementarlo con su marca, escríbanos a contact@alfaxisgroup.com.
+
+## Funciones
+
+- Carga de reportes en HTML y Excel.
+- Reconstrucción de la red de cada IB y sus niveles.
+- Métricas de volumen, clientes activos y actividad por red.
+- Panel con gráficos.
 
 ## Stack
 
-**Backend:**
-- FastAPI (Python 3.9+)
-- PostgreSQL / SQLite
-- BeautifulSoup4 (HTML parsing)
-- Pandas (data processing)
+| Capa | Tecnología |
+| --- | --- |
+| API | FastAPI (Python) |
+| Procesamiento | Pandas y BeautifulSoup |
+| Base de datos | PostgreSQL o SQLite |
+| Panel | React, TypeScript, Vite y Recharts |
 
-**Frontend:**
-- React 18
-- TypeScript
-- Vite
-- Recharts (visualización)
-- Aurum theme (negro + oro)
+## Desarrollo local
 
-## Estructura
-
-```
-ib-analytics-platform/
-├── backend/           # FastAPI backend
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── api/       # Endpoints
-│   │   ├── models/    # Database models
-│   │   ├── parsers/   # MT5 HTML parser
-│   │   └── services/  # Business logic
-│   ├── requirements.txt
-│   └── README.md
-├── frontend/          # React + TypeScript
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── App.tsx
-│   ├── package.json
-│   └── README.md
-└── README.md
-```
-
-## Features
-
-### Fase 1 (Actual):
-- ✅ Upload HTML de MT5 Administrator
-- ✅ Upload Excel con lista de cuentas
-- ✅ Parser de HTML a datos estructurados
-- ✅ Cálculo de métricas principales
-- ✅ Dashboard con KPIs
-- ✅ Tabla de cuentas con drill-down
-- ✅ Export CSV/Excel
-
-### Fase 2 (Futuro):
-- Detección de fraude
-- Análisis de riesgo
-- Cohort analysis
-- Histórico de datos
-
-## Quick Start
-
-### Backend:
 ```bash
-cd backend
 pip install -r requirements.txt
-python -m uvicorn app.main:app --reload
+uvicorn backend.main:app --reload
 ```
 
-### Frontend:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-## Datos
-
-**Input:**
-1. HTML export de MT5 Administrator (deals)
-2. Excel con cuentas a analizar (columna: Login)
-
-**Output:**
-- Dashboard con métricas calculadas
-- Tabla de cuentas con estadísticas
-- Reportes exportables
+Las cadenas de conexión y credenciales se configuran por variables de entorno.
 
 ---
 
-**Desarrollado por:** Viernes  
-**Cliente:** TAG Markets (Alex Lopez)  
-**Fecha inicio:** 2026-05-19
+Desarrollado por **Alfaxis** · [alfaxisgroup.com](https://alfaxisgroup.com) · contact@alfaxisgroup.com
+
+© 2026 Alfaxis. Todos los derechos reservados. Software propietario: su uso, copia o distribución requiere autorización escrita de Alfaxis.
